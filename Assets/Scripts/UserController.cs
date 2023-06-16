@@ -5,24 +5,17 @@ using UnityEngine;
 public class UserController : MonoBehaviour
 {
     public float cameraMoveSpeed;
-    public float mouseSensitivity = 100f;
-
-    private float mouseX;
-    private float mouseY;
-    private float xRotation = 0f;
 
     private float _inputLeftRight, _inputForwardBack, _inputUpDown;
 
     [SerializeField] private Camera _userCamera;
     [SerializeField] private Transform _moveTargetTransform;
-    [SerializeField] private int _camMoveInputMultiplayer;
+    [SerializeField] private float _camMoveInputMultiplayer;
 
     void Start()
     {
         if (!_userCamera)
             _userCamera = Camera.main;
-
-        Cursor.lockState = CursorLockMode.Locked;
     }
 
     // Update is called once per frame
@@ -47,23 +40,11 @@ public class UserController : MonoBehaviour
             _moveTargetTransform.localPosition = Vector3.zero;
         }
 
-        MoveCharacter(_moveTargetTransform.position);
+        MoveCharacter(transform,_moveTargetTransform.position);
     }
 
-    private void LateUpdate()
+    public void MoveCharacter(Transform _movingObject,Vector3 _target)
     {
-        mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
-        mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
-
-        xRotation -= mouseY;
-        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
-
-        transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
-        transform.parent.Rotate(Vector3.up * mouseX);
-    }
-
-    public void MoveCharacter(Vector3 _target)
-    {
-        transform.position = Vector3.MoveTowards(transform.position, _target, Time.deltaTime * cameraMoveSpeed);
+        transform.position = Vector3.MoveTowards(_movingObject.position, _target, Time.deltaTime * cameraMoveSpeed);
     }
 }
